@@ -30,7 +30,7 @@ jobs:
       run: |
         ssh -i ~/.ssh/id_rsa ec2-user@${{ env.EC2_HOST }} << 'EOF' || exit 1
         set -e  # Exit on errors
-        cd /home/ec2-user/Ci-Cd || exit 1  # Replace with your directory
+        cd /home/ec2-user/|| exit 1  # Replace with your directory
         git pull origin main || exit 1  # Pull the latest changes
 
         # Build the Golang app

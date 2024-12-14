@@ -1,0 +1,41 @@
+name: Deploy Golang App to AWS EC2 Instance
+
+on:
+  push:
+    branches:
+      - main  # Trigger workflow on push to the main branch
+
+env:
+  EC2_HOST: 13.53.133.235  # Replace with your EC2 public IP
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Step 1: Checkout code
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    # Step 2: Set up SSH
+    - name: Setup SSH
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.EC2_PEM_FILE }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan -H ${{ env.EC2_HOST }} >> ~/.ssh/known_hosts || true
+
+    # Step 3: Deploy Golang app to EC2
+    - name: Deploy to EC2
+      run: |
+        ssh -i ~/.ssh/id_rsa ec2-user@${{ env.EC2_HOST }} << 'EOF' || exit 1
+        set -e  # Exit on errors
+        cd /home/ec2-user/Ci-Cd || exit 1  # Replace with your directory
+        git pull origin main || exit 1  # Pull the latest changes
+
+        # Build the Golang app
+        go build -o my-app .
+        
+        # Restart the application
+        sudo systemctl restart my-app
+        EOF

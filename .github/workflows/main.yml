@@ -3,7 +3,7 @@ name: Deploy Golang App to AWS EC2 Instance
 on:
   push:
     branches:
-      - main  # Trigger workflow on push to the main branch
+      - main  # Trigger workflow on push to the main branc
 
 env:
   EC2_HOST: 13.53.133.235  # Replace with your EC2 public IP
